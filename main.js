@@ -1,4 +1,4 @@
-const API_KEY = "AQ.Ab8RN6LEtFeU3NXTEib9Y04GN4oBt4nz60D6_s_IA8oNEpWBgw";
+const API_KEY = "AQ.Ab8RN6JNdbKsXBZPG76JhfsT6R2btgwL_XfSnHIDc4ybCSDHhw";
 
 // ==============================
 // AMBIL ELEMEN HTML
