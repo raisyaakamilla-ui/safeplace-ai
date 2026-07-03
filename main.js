@@ -7,7 +7,7 @@ const userInput = document.getElementById("userInput");
 const response = document.getElementById("response");
 
 // 🔑 API KEY (PAKAI BARU)
-const API_KEY = "AQ.Ab8RN6LHvKbAXvmh_cggf87zvr_Q7K8K2UYfI6jXtcPIx_HSaA";
+const API_KEY = "AQ.Ab8RN6Jn9IJD009_6FA36pOIrCJXpWWrsNvEADyFaXrls5Fksw";
 
 async function askGemini(text) {
     try {
