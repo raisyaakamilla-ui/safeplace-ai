@@ -1,85 +1,63 @@
 // ==============================
-// SAFEPLACE AI
-// main.js
+// SAFEPLACE AI - FINAL VERSION
 // ==============================
 
-// Ambil elemen HTML
 const sendBtn = document.getElementById("sendBtn");
 const userInput = document.getElementById("userInput");
 const response = document.getElementById("response");
 
-// Daftar respon sementara
-const responses = [
-    "💙 Terima kasih sudah mau berbagi cerita. Kamu tidak sendirian, dan perasaanmu itu penting.",
-    "🌸 Apa yang kamu alami bukanlah kesalahanmu. Jika memungkinkan, cobalah bercerita kepada guru BK atau orang dewasa yang kamu percaya.",
-    "🩵 SafePlace AI selalu mendukungmu. Tetap semangat ya, kamu berharga.",
-    "🌼 Bullying bisa berdampak pada kesehatan mental. Jangan ragu mencari bantuan ketika kamu membutuhkannya.",
-    "🤍 Terima kasih sudah mempercayai SafePlace AI. Semoga harimu menjadi lebih baik."
-];
+// 🔑 API KEY (PAKAI BARU)
+const API_KEY = "AQ.Ab8RN6LHvKbAXvmh_cggf87zvr_Q7K8K2UYfI6jXtcPIx_HSaA";
 
-// Saat tombol diklik
-sendBtn.addEventListener("click", function () {
+async function askGemini(text) {
+    try {
+        const res = await fetch(
+            "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=" + API_KEY,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: `
+Kamu adalah SafePlace AI, teman aman untuk pelajar yang mengalami bullying.
+Jawab dengan empati, lembut, dan tidak menghakimi.
+
+Pesan user:
+${text}
+                            `
+                        }]
+                    }]
+                })
+            }
+        );
+
+        const data = await res.json();
+
+        return data.candidates?.[0]?.content?.parts?.[0]?.text
+            || "Maaf, tidak ada respon.";
+    } catch (err) {
+        return "Terjadi kesalahan koneksi.";
+    }
+}
+
+sendBtn.addEventListener("click", async () => {
 
     const text = userInput.value.trim();
 
-    if (text === "") {
-        response.innerHTML = "⚠️ Silakan tuliskan ceritamu terlebih dahulu.";
+    if (!text) {
+        response.innerHTML = "⚠️ Tulis dulu ceritamu ya.";
         return;
     }
 
-    // Loading
-    response.innerHTML = "🤖 SafePlace AI sedang mengetik...";
+    response.innerHTML = "🤖 SafePlace AI sedang berpikir...";
 
-    setTimeout(() => {
+    const reply = await askGemini(text);
 
-        const random =
-            responses[Math.floor(Math.random() * responses.length)];
-
-        response.innerHTML = `
-            <h3>🤖 SafePlace AI</h3>
-            <p>${random}</p>
-        `;
-
-    }, 1500);
-
-});
-
-// Animasi muncul saat halaman dibuka
-window.addEventListener("load", () => {
-
-    document.body.style.opacity = "0";
-
-    setTimeout(() => {
-
-        document.body.style.transition = "1s";
-
-        document.body.style.opacity = "1";
-
-    }, 100);
-
-});
-// ==============================
-// FAQ INTERAKTIF
-// ==============================
-
-const questions = document.querySelectorAll(".question");
-
-questions.forEach(question => {
-
-    question.addEventListener("click", () => {
-
-        const answer = question.nextElementSibling;
-
-        if (answer.style.display === "block") {
-
-            answer.style.display = "none";
-
-        } else {
-
-            answer.style.display = "block";
-
-        }
-
-    });
-
+    response.innerHTML = `
+        <h3>🤖 SafePlace AI</h3>
+        <p>${reply}</p>
+    `;
 });
