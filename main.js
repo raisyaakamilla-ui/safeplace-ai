@@ -1,4 +1,4 @@
-const API_KEY = "AQ.Ab8RN6IIA7bsBcYnjwNdWc72lMMMSmZkUjflCx6Bu89OXGHksg";
+const API_KEY = "AQ.Ab8RN6LEtFeU3NXTEib9Y04GN4oBt4nz60D6_s_IA8oNEpWBgw";
 
 // ==============================
 // AMBIL ELEMEN HTML
@@ -20,12 +20,30 @@ async function askGemini(text) {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    contents: [
-                        {
-                            role: "user",
-                            parts: [
-                                {
-                                    text: `
+                    contents: [{
+                        parts: [{ text }]
+                    }]
+                })
+            }
+        );
+
+        const data = await res.json();
+
+        console.log("STATUS:", res.status);
+        console.log("RESPONSE:", data);
+
+        if (!res.ok) {
+            return "ERROR API: " + JSON.stringify(data);
+        }
+
+        return data.candidates?.[0]?.content?.parts?.[0]?.text
+            || "Tidak ada jawaban dari Gemini.";
+
+    } catch (err) {
+        console.log("FETCH ERROR:", err);
+        return "FETCH ERROR (koneksi gagal total)";
+    }
+}
 Kamu adalah SafePlace AI, teman aman untuk pelajar yang mengalami bullying.
 
 Tugas kamu:
