@@ -1,14 +1,15 @@
-// ==============================
-// SAFEPLACE AI - FINAL VERSION
-// ==============================
+const API_KEY = "AQ.Ab8RN6IIA7bsBcYnjwNdWc72lMMMSmZkUjflCx6Bu89OXGHksg";
 
+// ==============================
+// AMBIL ELEMEN HTML
+// ==============================
 const sendBtn = document.getElementById("sendBtn");
 const userInput = document.getElementById("userInput");
 const response = document.getElementById("response");
 
-// 🔑 API KEY (PAKAI BARU)
-const API_KEY = "AQ.Ab8RN6Jn9IJD009_6FA36pOIrCJXpWWrsNvEADyFaXrls5Fksw";
-
+// ==============================
+// FUNGSI GEMINI AI
+// ==============================
 async function askGemini(text) {
     try {
         const res = await fetch(
@@ -19,30 +20,56 @@ async function askGemini(text) {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    contents: [{
-                        parts: [{
-                            text: `
+                    contents: [
+                        {
+                            role: "user",
+                            parts: [
+                                {
+                                    text: `
 Kamu adalah SafePlace AI, teman aman untuk pelajar yang mengalami bullying.
-Jawab dengan empati, lembut, dan tidak menghakimi.
+
+Tugas kamu:
+- Jawab dengan empati
+- Bahasa lembut
+- Tidak menghakimi
+- Berikan dukungan emosional
 
 Pesan user:
 ${text}
-                            `
-                        }]
-                    }]
+                                    `
+                                }
+                            ]
+                        }
+                    ]
                 })
             }
         );
 
         const data = await res.json();
 
-        return data.candidates?.[0]?.content?.parts?.[0]?.text
-            || "Maaf, tidak ada respon.";
+        console.log("DEBUG RESPONSE:", data); // penting untuk cek error
+
+        // kalau API error
+        if (!res.ok) {
+            return "❌ API Error: " + (data.error?.message || "Unknown error");
+        }
+
+        // kalau Gemini tidak kasih jawaban
+        if (!data.candidates || !data.candidates[0]) {
+            return "❌ Gemini tidak memberi respon.";
+        }
+
+        return data.candidates[0].content.parts[0].text;
+
     } catch (err) {
-        return "Terjadi kesalahan koneksi.";
+        console.log(err);
+        return "❌ Koneksi error ke Gemini.";
     }
 }
 
+// ==============================
+// EVENT KLIK TOMBOL
+// ==============================
 sendBtn.addEventListener("click", async () => {
 
     const text = userInput.value.trim();
@@ -60,4 +87,29 @@ sendBtn.addEventListener("click", async () => {
         <h3>🤖 SafePlace AI</h3>
         <p>${reply}</p>
     `;
+});
+
+// ==============================
+// ANIMASI HALAMAN
+// ==============================
+window.addEventListener("load", () => {
+    document.body.style.opacity = "0";
+
+    setTimeout(() => {
+        document.body.style.transition = "1s";
+        document.body.style.opacity = "1";
+    }, 100);
+});
+
+// ==============================
+// FAQ TOGGLE
+// ==============================
+const questions = document.querySelectorAll(".question");
+
+questions.forEach(q => {
+    q.addEventListener("click", () => {
+        const answer = q.nextElementSibling;
+        answer.style.display =
+            answer.style.display === "block" ? "none" : "block";
+    });
 });
